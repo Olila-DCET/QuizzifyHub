@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Dashboard | QuizzifyHub</title>
+  <link rel="stylesheet" href="admin.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wghta@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <header class="admin-header">
+    <h1>Admin Dashboard</h1>
+    <button id="logout-btn">Logout</button>
+  </header>
+
+  <main class="admin-main">
+    <section class="admin-section">
+      <h2>Create a New Quiz</h2>
+      <form id="create-quiz-form">
+        <input type="text" id="quiz-title" placeholder="Quiz Title" required />
+        <input type="text" id="quiz-grade" placeholder="Grade Level (e.g. Grade 6)" required />
+        <input type="text" id="quiz-subject" placeholder="Subject (e.g. Science)" required />
+
+        <div class="answer-type-selection">
+          <p><strong>Select Answer Type:</strong></p>
+          <label><input type="radio" name="answer-type" value="multiple" required /> Multiple Choice</label><br/>
+          <label><input type="radio" name="answer-type" value="short" required /> Short Answer</label>
+        </div>
+
+        <button type="submit">Next: Add Questions</button>
+      </form>
+    </section>
+
+    <section class="admin-section">
+      <h2>Existing Quizzes</h2>
+      <div id="quiz-list"></div>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 QuizzifyHub Admin</p>
+  </footer>
+
+  <script src="admin.js"></script>
+</body>
+</html>

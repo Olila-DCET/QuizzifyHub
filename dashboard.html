@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>QuizzifyHub | Dashboard</title>
+  <link rel="stylesheet" href="Quizzify1.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Comic+Neue:wght@400;700&display=swap" rel="stylesheet"/>
+</head>
+<body>
+
+<header class="main-header">
+  <div class="logo">
+    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSRoaiI6zhPtZgcCPSI1-WBqkRSALQsoscOng&s" alt="QuizzifyHub Logo" width="40" />
+    <h1>QuizzifyHub</h1>
+  </div>
+  <div class="user-actions">
+    <span id="username-display" class="username-label">Hello, User</span>
+    <button id="logout-btn" class="logout-btn">Logout</button>
+  </div>
+</header>
+
+<section class="quiz-list" style="padding: 2rem 5%">
+  <h3>Your Quizzes</h3>
+  <div id="quiz-container">
+    <div class="quiz-category" id="category-History">
+      <h4>History</h4>
+      <div class="quiz-items"></div>
+    </div>
+    <div class="quiz-category" id="category-Math">
+      <h4>Math</h4>
+      <div class="quiz-items"></div>
+    </div>
+    <div class="quiz-category" id="category-Filipino">
+      <h4>Filipino</h4>
+      <div class="quiz-items"></div>
+    </div>
+    <div class="quiz-category" id="category-English">
+      <h4>English</h4>
+      <div class="quiz-items"></div>
+    </div>
+    <div class="quiz-category" id="category-Science">
+      <h4>Science</h4>
+      <div class="quiz-items"></div>
+    </div>
+  </div>
+</section>
+
+<section class="results-section" style="padding: 2rem 5%">
+  <h3>Your Quiz Results</h3>
+  <div id="results-container" class="results-container"></div>
+</section>
+
+<script src="dashboard.js"></script>
+</body>
+</html>
