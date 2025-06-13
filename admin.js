@@ -11,7 +11,7 @@ let currentQuestions = [];
 
 logoutBtn.addEventListener('click', () => {
   localStorage.removeItem('username');
-  window.location.href = 'Quizzify1.html';
+  window.location.href = 'index.html';
 });
 
 const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
