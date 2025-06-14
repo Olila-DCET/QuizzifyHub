@@ -9,9 +9,6 @@ const quizzes = JSON.parse(localStorage.getItem('quizzes') || '[]');
 const quiz = quizzes.find(q => q.id === quizId);
 const username = localStorage.getItem('username') || 'guest';
 const quizResults = JSON.parse(localStorage.getItem('quizResults') || '[]');
-const alreadyTaken = quizResults.some(
-  r => r.quizId === quizId && r.username === username
-);
 
 if (backBtn) {
   backBtn.addEventListener('click', () => {
@@ -21,16 +18,6 @@ if (backBtn) {
 
 if (!quizId || !quiz || !quiz.questions || !quiz.questions.length) {
   quizDetails.innerHTML = '<p>⚠️ Quiz not found or has no questions. Please use a valid link.</p>';
-  submitBtn.style.display = 'none';
-} else if (alreadyTaken) {
-  quizDetails.innerHTML = `
-    <h2>${quiz.title}</h2>
-    <p><strong>Grade:</strong> ${quiz.grade} | <strong>Subject:</strong> ${quiz.subject}</p>
-    <p><strong>Type:</strong> ${quiz.type === 'multiple' ? 'Multiple Choice' : 'Short Answer'}</p>
-    <div class="quiz-result" style="margin-top:1.5rem;color:var(--success);font-weight:600;">
-      You have already taken this quiz.
-    </div>
-  `;
   submitBtn.style.display = 'none';
 } else {
   quizDetails.innerHTML = `
@@ -66,11 +53,6 @@ submitBtn.addEventListener('click', (e) => {
   e.preventDefault();
 
   if (!quiz || !quiz.questions) return;
-
-  if (alreadyTaken) {
-    resultDiv.innerHTML = `<div style="color:var(--warning);font-weight:600;">You have already taken this quiz.</div>`;
-    return;
-  }
 
   const formData = new FormData(quizForm);
   let score = 0;
