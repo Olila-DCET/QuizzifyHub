@@ -12,7 +12,7 @@ const cancelStudentQuizBtn = document.getElementById('cancel-student-quiz-btn');
 let studentQuizData = null;
 let studentQuestions = [];
 
-
+// Show modal for creating quiz
 if (studentCreateQuizBtn) {
   studentCreateQuizBtn.addEventListener('click', () => {
     studentQuizModal.style.display = 'flex';
@@ -23,7 +23,6 @@ if (studentCreateQuizBtn) {
     studentQuestions = [];
   });
 }
-
 
 if (closeStudentQuizModal) {
   closeStudentQuizModal.addEventListener('click', () => {
@@ -51,51 +50,65 @@ if (username && usernameDisplay) {
   usernameDisplay.textContent = `Hello, ${username}`;
 }
 
+// --- DYNAMIC QUIZ CATEGORY RENDERING ---
+function displayAllQuizzes() {
+  quizContainer.innerHTML = ''; // Clear previous content
 
-function displayQuiz(quiz) {
-
-  const normalizedSubject = quiz.subject.replace(/\s+/g, '').toLowerCase();
-  let container = document.querySelector(`#category-${normalizedSubject} .quiz-items`);
- 
-  if (!container) {
-    const newCategory = document.createElement('div');
-    newCategory.className = 'quiz-category';
-    newCategory.id = `category-${normalizedSubject}`;
-    newCategory.innerHTML = `
-      <h4>${quiz.subject}</h4>
-      <div class="quiz-items"></div>
-    `;
-    quizContainer.appendChild(newCategory);
-    container = newCategory.querySelector('.quiz-items');
+  const quizzes = JSON.parse(localStorage.getItem('quizzes') || '[]');
+  if (quizzes.length === 0) {
+    quizContainer.innerHTML = '<p>No quizzes available.</p>';
+    return;
   }
 
-  if (!quiz.questions || !quiz.questions.length) return;
+  // Group quizzes by normalized subject
+  const subjectMap = {};
+  quizzes.forEach(quiz => {
+    if (!quiz.questions || !quiz.questions.length) return;
+    const normalizedSubject = quiz.subject.replace(/\s+/g, '').toLowerCase();
+    if (!subjectMap[normalizedSubject]) {
+      subjectMap[normalizedSubject] = {
+        subject: quiz.subject,
+        quizzes: []
+      };
+    }
+    subjectMap[normalizedSubject].quizzes.push(quiz);
+  });
 
-  const quizDiv = document.createElement('div');
-  quizDiv.className = 'quiz-card';
-  quizDiv.innerHTML = `
-    <strong>${quiz.title}</strong><br/>
-    <span class="quiz-grade">Grade Level: ${quiz.grade}</span><br/>
-    <button class="btn-take-quiz" onclick="window.location.href='take-quiz.html?id=${quiz.id}'">Take Quiz</button>
-  `;
-  container.appendChild(quizDiv);
+  // Render each subject category and its quizzes
+  Object.values(subjectMap).forEach(({ subject, quizzes }) => {
+    const normalizedSubject = subject.replace(/\s+/g, '').toLowerCase();
+    const categoryDiv = document.createElement('div');
+    categoryDiv.className = 'quiz-category';
+    categoryDiv.id = `category-${normalizedSubject}`;
+    categoryDiv.innerHTML = `
+      <h4>${subject}</h4>
+      <div class="quiz-items"></div>
+    `;
+    quizContainer.appendChild(categoryDiv);
 
-  const msg = container.querySelector('.no-quiz-msg');
-  if (msg) msg.remove();
-}
+    const quizItemsDiv = categoryDiv.querySelector('.quiz-items');
+    quizzes.forEach(quiz => {
+      const quizDiv = document.createElement('div');
+      quizDiv.className = 'quiz-card';
+      quizDiv.innerHTML = `
+        <strong>${quiz.title}</strong><br/>
+        <span class="quiz-grade">Grade Level: ${quiz.grade}</span><br/>
+        <button class="btn-take-quiz" onclick="window.location.href='take-quiz.html?id=${quiz.id}'">Take Quiz</button>
+      `;
+      quizItemsDiv.appendChild(quizDiv);
+    });
 
-
-function displayNoQuizzes() {
-  document.querySelectorAll('.quiz-items').forEach(container => {
-    if (!container.children.length) {
+    // If no quizzes in this category, show message
+    if (!quizItemsDiv.children.length) {
       const msg = document.createElement('p');
       msg.className = 'no-quiz-msg';
       msg.textContent = 'No quizzes available.';
-      container.appendChild(msg);
+      quizItemsDiv.appendChild(msg);
     }
   });
 }
 
+// --- END DYNAMIC QUIZ CATEGORY RENDERING ---
 
 function displayQuizResults() {
   const username = localStorage.getItem('username');
@@ -121,20 +134,10 @@ function displayQuizResults() {
   });
 }
 
-
-quizContainer.innerHTML = ''; 
-
-const quizzes = JSON.parse(localStorage.getItem('quizzes') || '[]');
-if (quizzes.length === 0) {
-  quizContainer.innerHTML = '<p>No quizzes available.</p>';
-} else {
-  quizzes.forEach(displayQuiz);
-  displayNoQuizzes();
-}
-
+// Render quizzes dynamically
+displayAllQuizzes();
 
 document.addEventListener('DOMContentLoaded', displayQuizResults);
-
 
 if (logoutBtn) {
   logoutBtn.addEventListener('click', () => {
@@ -144,8 +147,6 @@ if (logoutBtn) {
     }
   });
 }
-
-
 
 if (studentQuizForm) {
   studentQuizForm.addEventListener('submit', (e) => {
@@ -175,40 +176,38 @@ if (studentQuizForm) {
   });
 }
 
-
 function renderStudentQuestionForm() {
   if (studentQuestions.length >= 10) {
     saveStudentQuiz();
     return;
   }
 
-studentQuizQuestionsDiv.innerHTML = `
-  <form id="student-question-form">
-    <input type="text" id="student-question-text" placeholder="Enter question" required />
-    ${studentQuizData.type === 'multiple' ? `
-      <input type="text" id="student-option1" placeholder="Option A" required />
-      <input type="text" id="student-option2" placeholder="Option B" required />
-      <input type="text" id="student-option3" placeholder="Option C" required />
-      <input type="text" id="student-option4" placeholder="Option D" required />
-      <input type="text" id="student-answer" placeholder="Correct Option (A, B, C, or D)" required />
-    ` : `
-      <input type="text" id="student-answer" placeholder="Correct Answer" required />
-    `}
-    <button type="submit">${studentQuestions.length === 9 ? 'Finish Quiz' : 'Add Question'}</button>
-    <button type="button" id="cancel-question-btn" class="btn btn-secondary" style="margin-left:10px;">Cancel</button>
-  </form>
-  <p>${studentQuestions.length}/10 questions added</p>
-`;
+  studentQuizQuestionsDiv.innerHTML = `
+    <form id="student-question-form">
+      <input type="text" id="student-question-text" placeholder="Enter question" required />
+      ${studentQuizData.type === 'multiple' ? `
+        <input type="text" id="student-option1" placeholder="Option A" required />
+        <input type="text" id="student-option2" placeholder="Option B" required />
+        <input type="text" id="student-option3" placeholder="Option C" required />
+        <input type="text" id="student-option4" placeholder="Option D" required />
+        <input type="text" id="student-answer" placeholder="Correct Option (A, B, C, or D)" required />
+      ` : `
+        <input type="text" id="student-answer" placeholder="Correct Answer" required />
+      `}
+      <button type="submit">${studentQuestions.length === 9 ? 'Finish Quiz' : 'Add Question'}</button>
+      <button type="button" id="cancel-question-btn" class="btn btn-secondary" style="margin-left:10px;">Cancel</button>
+    </form>
+    <p>${studentQuestions.length}/10 questions added</p>
+  `;
 
-
-document.getElementById('cancel-question-btn').addEventListener('click', () => {
-  studentQuizModal.style.display = 'none';
-  studentQuizForm.style.display = '';
-  studentQuizQuestionsDiv.innerHTML = '';
-  studentQuizForm.reset();
-  studentQuizData = null;
-  studentQuestions = [];
-});
+  document.getElementById('cancel-question-btn').addEventListener('click', () => {
+    studentQuizModal.style.display = 'none';
+    studentQuizForm.style.display = '';
+    studentQuizQuestionsDiv.innerHTML = '';
+    studentQuizForm.reset();
+    studentQuizData = null;
+    studentQuestions = [];
+  });
 
   document.getElementById('student-question-form').addEventListener('submit', (e) => {
     e.preventDefault();
