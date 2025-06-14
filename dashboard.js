@@ -46,22 +46,29 @@ if (cancelStudentQuizBtn) {
   });
 }
 
-
 const username = localStorage.getItem('username');
 if (username && usernameDisplay) {
   usernameDisplay.textContent = `Hello, ${username}`;
 }
 
+
 function displayQuiz(quiz) {
-  // Capitalize first letter and lowercase the rest for matching
-  const subject = quiz.subject.charAt(0).toUpperCase() + quiz.subject.slice(1).toLowerCase();
-  let container = document.querySelector(`#category-${subject} .quiz-items`);
+
+  const normalizedSubject = quiz.subject.replace(/\s+/g, '').toLowerCase();
+  let container = document.querySelector(`#category-${normalizedSubject} .quiz-items`);
+
+ 
   if (!container) {
-    // fallback: try normalized subject (no spaces, lowercase)
-    const normalizedSubject = quiz.subject.replace(/\s+/g, '').toLowerCase();
-    container = document.querySelector(`#category-${normalizedSubject} .quiz-items`);
+    const newCategory = document.createElement('div');
+    newCategory.className = 'quiz-category';
+    newCategory.id = `category-${normalizedSubject}`;
+    newCategory.innerHTML = `
+      <h4>${quiz.subject}</h4>
+      <div class="quiz-items"></div>
+    `;
+    quizContainer.appendChild(newCategory);
+    container = newCategory.querySelector('.quiz-items');
   }
-  if (!container) return; // If still not found, skip
 
   if (!quiz.questions || !quiz.questions.length) return;
 
@@ -78,13 +85,18 @@ function displayQuiz(quiz) {
   if (msg) msg.remove();
 }
 
+
 function displayNoQuizzes() {
   document.querySelectorAll('.quiz-items').forEach(container => {
     if (!container.children.length) {
-      container.innerHTML = '<div class="no-quiz-msg" style="color:#888;">No quizzes in this category.</div>';
+      const msg = document.createElement('p');
+      msg.className = 'no-quiz-msg';
+      msg.textContent = 'No quizzes available.';
+      container.appendChild(msg);
     }
   });
 }
+
 
 function displayQuizResults() {
   const username = localStorage.getItem('username');
@@ -96,23 +108,23 @@ function displayQuizResults() {
     return;
   }
 
-  results.sort((a, b) => b.date - a.date);
-
   resultsContainer.innerHTML = '';
-  results.forEach((result, idx) => {
-    resultsContainer.innerHTML += `
-      <div class="result-card">
-        <h4>${result.title}</h4>
-        <p>Subject: ${result.subject} | Grade: ${result.grade}</p>
-        <p>Score: ${result.score} / ${result.total}</p>
-        <p>Date: ${new Date(result.date).toLocaleString()}</p>
-        <p style="font-size:0.95em;color:#888;">Attempt #${results.length - idx}</p>
-      </div>
+  results.forEach((result) => {
+    const div = document.createElement('div');
+    div.className = 'result-card';
+    div.innerHTML = `
+      <h4>${result.title}</h4>
+      <p>Subject: ${result.subject} | Grade: ${result.grade}</p>
+      <p>Score: ${result.score} / ${result.total}</p>
+      <p>Date: ${new Date(result.date).toLocaleString()}</p>
     `;
+    resultsContainer.appendChild(div);
   });
 }
 
-quizContainer.innerHTML = '';
+
+quizContainer.innerHTML = ''; 
+
 const quizzes = JSON.parse(localStorage.getItem('quizzes') || '[]');
 if (quizzes.length === 0) {
   quizContainer.innerHTML = '<p>No quizzes available.</p>';
@@ -121,21 +133,27 @@ if (quizzes.length === 0) {
   displayNoQuizzes();
 }
 
+
 document.addEventListener('DOMContentLoaded', displayQuizResults);
+
 
 if (logoutBtn) {
   logoutBtn.addEventListener('click', () => {
-    localStorage.removeItem('username');
-    window.location.href = 'index.html';
+    if (confirm('Are you sure you want to logout?')) {
+      localStorage.removeItem('username');
+      window.location.href = 'index.html';
+    }
   });
 }
+
+
 
 if (studentQuizForm) {
   studentQuizForm.addEventListener('submit', (e) => {
     e.preventDefault();
-    const title = studentQuizForm.querySelector('#student-quiz-title').value.trim();
-    const grade = studentQuizForm.querySelector('#student-quiz-grade').value.trim();
-    const subject = studentQuizForm.querySelector('#student-quiz-subject').value.trim();
+    const title = document.getElementById('student-quiz-title').value.trim();
+    const grade = document.getElementById('student-quiz-grade').value.trim();
+    const subject = document.getElementById('student-quiz-subject').value.trim();
     const type = studentQuizForm.querySelector('input[name="student-answer-type"]:checked')?.value;
 
     if (!title || !grade || !subject || !type) {
@@ -149,7 +167,8 @@ if (studentQuizForm) {
       grade,
       subject,
       type,
-      questions: []
+      questions: [],
+      createdBy: username || 'guest'
     };
     studentQuestions = [];
     studentQuizForm.style.display = 'none';
@@ -157,37 +176,40 @@ if (studentQuizForm) {
   });
 }
 
+
 function renderStudentQuestionForm() {
   if (studentQuestions.length >= 10) {
     saveStudentQuiz();
     return;
   }
 
-  studentQuizQuestionsDiv.innerHTML = `
-    <form id="student-question-form">
-      <input type="text" id="student-question-text" placeholder="Enter question" required />
-      ${studentQuizData.type === 'multiple' ? `
-        <input type="text" id="student-option1" placeholder="Option A" required />
-        <input type="text" id="student-option2" placeholder="Option B" required />
-        <input type="text" id="student-option3" placeholder="Option C" required />
-        <input type="text" id="student-option4" placeholder="Option D" required />
-        <input type="text" id="student-answer" placeholder="Correct Option (A, B, C, or D)" required />
-      ` : `
-        <input type="text" id="student-answer" placeholder="Correct Answer" required />
-      `}
-      <button type="submit">${studentQuestions.length === 9 ? 'Finish Quiz' : 'Add Question'}</button>
-      <button type="button" id="cancel-question-btn" class="btn btn-secondary" style="margin-left:10px;">Cancel</button>
-    </form>
-    <p>${studentQuestions.length}/10 questions added</p>
-  `;
+studentQuizQuestionsDiv.innerHTML = `
+  <form id="student-question-form">
+    <input type="text" id="student-question-text" placeholder="Enter question" required />
+    ${studentQuizData.type === 'multiple' ? `
+      <input type="text" id="student-option1" placeholder="Option A" required />
+      <input type="text" id="student-option2" placeholder="Option B" required />
+      <input type="text" id="student-option3" placeholder="Option C" required />
+      <input type="text" id="student-option4" placeholder="Option D" required />
+      <input type="text" id="student-answer" placeholder="Correct Option (A, B, C, or D)" required />
+    ` : `
+      <input type="text" id="student-answer" placeholder="Correct Answer" required />
+    `}
+    <button type="submit">${studentQuestions.length === 9 ? 'Finish Quiz' : 'Add Question'}</button>
+    <button type="button" id="cancel-question-btn" class="btn btn-secondary" style="margin-left:10px;">Cancel</button>
+  </form>
+  <p>${studentQuestions.length}/10 questions added</p>
+`;
 
-  document.getElementById('cancel-question-btn').addEventListener('click', () => {
-    studentQuizQuestionsDiv.innerHTML = '';
-    studentQuizForm.style.display = '';
-    studentQuizForm.reset();
-    studentQuizData = null;
-    studentQuestions = [];
-  });
+
+document.getElementById('cancel-question-btn').addEventListener('click', () => {
+  studentQuizModal.style.display = 'none';
+  studentQuizForm.style.display = '';
+  studentQuizQuestionsDiv.innerHTML = '';
+  studentQuizForm.reset();
+  studentQuizData = null;
+  studentQuestions = [];
+});
 
   document.getElementById('student-question-form').addEventListener('submit', (e) => {
     e.preventDefault();
@@ -195,31 +217,42 @@ function renderStudentQuestionForm() {
     const answer = document.getElementById('student-answer').value.trim();
 
     if (!questionText || !answer) {
-      alert('Please fill in all fields.');
+      alert('Please fill in all required fields.');
       return;
     }
 
     let question = { questionText, answer };
+
     if (studentQuizData.type === 'multiple') {
-      const option1 = document.getElementById('student-option1').value.trim();
-      const option2 = document.getElementById('student-option2').value.trim();
-      const option3 = document.getElementById('student-option3').value.trim();
-      const option4 = document.getElementById('student-option4').value.trim();
-      if (!option1 || !option2 || !option3 || !option4) {
+      const options = [
+        document.getElementById('student-option1').value.trim(),
+        document.getElementById('student-option2').value.trim(),
+        document.getElementById('student-option3').value.trim(),
+        document.getElementById('student-option4').value.trim()
+      ];
+      if (options.some(opt => !opt)) {
         alert('Please fill in all options.');
         return;
       }
-      question.options = [option1, option2, option3, option4];
       if (!['A', 'B', 'C', 'D'].includes(answer.toUpperCase())) {
         alert('Correct option must be A, B, C, or D.');
         return;
       }
+      question.options = options;
+      question.answer = answer.toUpperCase();
     }
+
     studentQuestions.push(question);
-    renderStudentQuestionForm();
+
+    if (studentQuestions.length === 10) {
+      saveStudentQuiz();
+    } else {
+      renderStudentQuestionForm();
+    }
   });
 }
 
+// Step 3: Save to pendingQuizzes
 function saveStudentQuiz() {
   studentQuizData.questions = studentQuestions;
   const pending = JSON.parse(localStorage.getItem('pendingQuizzes') || '[]');

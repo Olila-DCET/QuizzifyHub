@@ -22,22 +22,24 @@
   </div>
 </header>
 
+
 <div id="student-quiz-modal" class="modal" role="dialog" aria-modal="true" style="display:none;">
   <span class="close-modal-btn" id="close-student-quiz-modal">&times;</span>
   <h2>Create a Quiz</h2>
-  <form id="student-quiz-form">
-    <input type="text" id="student-quiz-title" placeholder="Quiz Title" required />
-    <input type="text" id="student-quiz-grade" placeholder="Grade Level" required />
-    <input type="text" id="student-quiz-subject" placeholder="Subject" required />
-    <div>
-      <label><input type="radio" name="student-answer-type" value="multiple" required /> Multiple Choice</label>
-      <label><input type="radio" name="student-answer-type" value="short" required /> Short Answer</label>
-    </div>
-    <button type="submit">Next: Add Questions</button>
-    <button type="button" id="cancel-student-quiz-btn" class="btn btn-secondary" style="margin-left:10px;">Cancel</button>
-  </form>
+<form id="student-quiz-form">
+  <input type="text" id="student-quiz-title" placeholder="Quiz Title" required />
+  <input type="text" id="student-quiz-grade" placeholder="Grade Level" required />
+  <input type="text" id="student-quiz-subject" placeholder="Subject" required />
+  <div>
+    <label><input type="radio" name="student-answer-type" value="multiple" required /> Multiple Choice</label>
+    <label><input type="radio" name="student-answer-type" value="short" required /> Short Answer</label>
+  </div>
+  <button type="submit">Next: Add Questions</button>
+  <button type="button" id="cancel-student-quiz-btn" class="btn btn-secondary" style="margin-left:10px;">Cancel</button>
+</form>
   <div id="student-quiz-questions"></div>
 </div>
+
 
 <section class="quiz-list" style="padding: 2rem 5%">
   <h3>Your Quizzes</h3>
