@@ -53,12 +53,15 @@ if (username && usernameDisplay) {
 }
 
 function displayQuiz(quiz) {
-  const normalizedSubject = quiz.subject.replace(/\s+/g, '').toLowerCase();
-  let container = document.querySelector(`#category-${quiz.subject} .quiz-items`);
+  // Capitalize first letter and lowercase the rest for matching
+  const subject = quiz.subject.charAt(0).toUpperCase() + quiz.subject.slice(1).toLowerCase();
+  let container = document.querySelector(`#category-${subject} .quiz-items`);
   if (!container) {
+    // fallback: try normalized subject (no spaces, lowercase)
+    const normalizedSubject = quiz.subject.replace(/\s+/g, '').toLowerCase();
     container = document.querySelector(`#category-${normalizedSubject} .quiz-items`);
   }
-  if (!container) return;
+  if (!container) return; // If still not found, skip
 
   if (!quiz.questions || !quiz.questions.length) return;
 
