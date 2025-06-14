@@ -129,13 +129,13 @@ function displayQuizzes() {
   quizzes.forEach((quiz, index) => {
     const div = document.createElement('div');
     div.className = 'quiz-card';
-    div.innerHTML = `
-      <h3>${quiz.title}</h3>
-      <p>Grade: ${quiz.grade} | Subject: ${quiz.subject} | Type: ${quiz.type === 'multiple' ? 'Multiple Choice' : 'Short Answer'}</p>
-      <p>${quiz.questions.length} questions</p>
-      <a href="take-quiz.html?id=${quiz.id}" target="_blank">Take Quiz</a>
-      <button onclick="deleteQuiz(${index})">Delete</button>
-    `;
+div.innerHTML = `
+  <h3>${quiz.title}</h3>
+  <p>Grade: ${quiz.grade} | Subject: ${quiz.subject} | Type: ${quiz.type === 'multiple' ? 'Multiple Choice' : 'Short Answer'}</p>
+  <p>${quiz.questions.length} questions</p>
+  <a href="take-quiz.html?id=${quiz.id}" target="_blank" class="btn">Take Quiz</a>
+  <button class="btn" onclick="deleteQuiz(${index})">Delete</button>
+`;
     quizList.appendChild(div);
   });
 }
@@ -147,5 +147,57 @@ function deleteQuiz(index) {
   localStorage.setItem('quizzes', JSON.stringify(quizzes));
   displayQuizzes();
 }
+function displayPendingQuizzes() {
+  let pendingList = document.getElementById('pending-quiz-list');
+  if (!pendingList) {
+    pendingList = document.createElement('div');
+    pendingList.id = 'pending-quiz-list';
+    pendingList.innerHTML = '<h2>Pending Student Quizzes</h2>';
+    document.querySelector('.admin-main').prepend(pendingList);
+  }
+  const pending = JSON.parse(localStorage.getItem('pendingQuizzes') || '[]');
+  pendingList.innerHTML = '<h2>Pending Student Quizzes</h2>';
+  if (pending.length === 0) {
+    pendingList.innerHTML += '<p>No pending quizzes.</p>';
+    return;
+  }
+  pending.forEach((quiz, idx) => {
+    const div = document.createElement('div');
+    div.className = 'quiz-card';
+    div.innerHTML = `
+      <h3>${quiz.title}</h3>
+      <p>Grade: ${quiz.grade} | Subject: ${quiz.subject} | Type: ${quiz.type === 'multiple' ? 'Multiple Choice' : 'Short Answer'}</p>
+      <p>${quiz.questions.length} questions</p>
+      <button onclick="approveQuiz(${idx})">Approve</button>
+      <button onclick="rejectQuiz(${idx})">Reject</button>
+    `;
+    pendingList.appendChild(div);
+  });
+}
 
-document.addEventListener('DOMContentLoaded', displayQuizzes);
+window.approveQuiz = function(idx) {
+  const pending = JSON.parse(localStorage.getItem('pendingQuizzes') || '[]');
+  const quiz = pending.splice(idx, 1)[0];
+  // Add to quizzes
+  const quizzes = JSON.parse(localStorage.getItem('quizzes') || '[]');
+  quizzes.push(quiz);
+  localStorage.setItem('quizzes', JSON.stringify(quizzes));
+  localStorage.setItem('pendingQuizzes', JSON.stringify(pending));
+  displayPendingQuizzes();
+  displayQuizzes();
+};
+
+window.rejectQuiz = function(idx) {
+  const pending = JSON.parse(localStorage.getItem('pendingQuizzes') || '[]');
+  pending.splice(idx, 1);
+  localStorage.setItem('pendingQuizzes', JSON.stringify(pending));
+  displayPendingQuizzes();
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+  displayQuizzes();
+  displayPendingQuizzes();
+});
+
+
+//document.addEventListener('DOMContentLoaded', displayQuizzes);

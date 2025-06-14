@@ -10,15 +10,36 @@
 <body>
 
 <header class="main-header">
-  <div class="logo",  href="index.html">
+  <div class="logo" href="index.html">
     <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSRoaiI6zhPtZgcCPSI1-WBqkRSALQsoscOng&s" alt="QuizzifyHub Logo" width="40" />
     <h1>QuizzifyHub</h1>
   </div>
+  
+  <button id="student-create-quiz-btn" class="btn btn-primary" style="margin-bottom:1.5rem;">Create a Quiz</button>
   <div class="user-actions">
     <span id="username-display" class="username-label">Hello, User</span>
     <button id="logout-btn" class="logout-btn">Logout</button>
   </div>
 </header>
+
+
+<div id="student-quiz-modal" class="modal" role="dialog" aria-modal="true" style="display:none;">
+  <span class="close-modal-btn" id="close-student-quiz-modal">&times;</span>
+  <h2>Create a Quiz</h2>
+<form id="student-quiz-form">
+  <input type="text" id="student-quiz-title" placeholder="Quiz Title" required />
+  <input type="text" id="student-quiz-grade" placeholder="Grade Level" required />
+  <input type="text" id="student-quiz-subject" placeholder="Subject" required />
+  <div>
+    <label><input type="radio" name="student-answer-type" value="multiple" required /> Multiple Choice</label>
+    <label><input type="radio" name="student-answer-type" value="short" required /> Short Answer</label>
+  </div>
+  <button type="submit">Next: Add Questions</button>
+  <button type="button" id="cancel-student-quiz-btn" class="btn btn-secondary" style="margin-left:10px;">Cancel</button>
+</form>
+  <div id="student-quiz-questions"></div>
+</div>
+
 
 <section class="quiz-list" style="padding: 2rem 5%">
   <h3>Your Quizzes</h3>
