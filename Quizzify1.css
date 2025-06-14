@@ -596,6 +596,16 @@ footer {
   border: 1px solid #ccc;
   font-size: 1rem;
 }
+.modal-content {
+  background: #fff;
+  padding: 30px 24px;
+  border-radius: 10px;
+  box-shadow: 0 0 15px rgba(0,0,0,0.3);
+  max-width: 400px;
+  width: 90%;
+  color: var(--dark);
+  text-align: left;
+}
 
 .close-modal-btn {
   align-self: flex-end;
@@ -908,3 +918,4 @@ footer {
     padding: 1rem 0.5rem;
   }
 }
+

@@ -29,6 +29,8 @@ if (featuresLink && featuresModal && closeFeaturesModal) {
     if (e.key === 'Escape' && featuresModal.classList.contains('active')) featuresModal.classList.remove('active');
   });
 }
+
+
 let isSignup = false;
 let isAdminLogin = false;
 
