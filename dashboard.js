@@ -53,13 +53,20 @@ if (username && usernameDisplay) {
 
 
 function displayQuiz(quiz) {
-  // Capitalize first letter, lowercase the rest to match HTML IDs
-  const normalizedSubject = quiz.subject.charAt(0).toUpperCase() + quiz.subject.slice(1).toLowerCase();
-  let container = document.querySelector(`#category-${normalizedSubject} .quiz-items`);
 
+  const normalizedSubject = quiz.subject.replace(/\s+/g, '').toLowerCase();
+  let container = document.querySelector(`#category-${normalizedSubject} .quiz-items`);
+ 
   if (!container) {
-    // If the subject doesn't match any existing category, skip displaying
-    return;
+    const newCategory = document.createElement('div');
+    newCategory.className = 'quiz-category';
+    newCategory.id = `category-${normalizedSubject}`;
+    newCategory.innerHTML = `
+      <h4>${quiz.subject}</h4>
+      <div class="quiz-items"></div>
+    `;
+    quizContainer.appendChild(newCategory);
+    container = newCategory.querySelector('.quiz-items');
   }
 
   if (!quiz.questions || !quiz.questions.length) return;
