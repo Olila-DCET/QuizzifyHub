@@ -9,11 +9,30 @@ const authMessage = document.getElementById('auth-message');
 const closeBtn = document.getElementById('close-modal');
 const startBtn = document.getElementById('start-learning-btn');
 const createQuizBtn = document.querySelector('.create-btn');
+const featuresLink = document.querySelector('.nav-link[href="#features"]');
+const featuresModal = document.getElementById('features-modal');
+const closeFeaturesModal = document.getElementById('close-features-modal');
 
+
+if (featuresLink && featuresModal && closeFeaturesModal) {
+  featuresLink.addEventListener('click', (e) => {
+    e.preventDefault();
+    featuresModal.classList.add('active');
+  });
+  closeFeaturesModal.addEventListener('click', () => {
+    featuresModal.classList.remove('active');
+  });
+  window.addEventListener('click', (e) => {
+    if (e.target === featuresModal) featuresModal.classList.remove('active');
+  });
+  window.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && featuresModal.classList.contains('active')) featuresModal.classList.remove('active');
+  });
+}
 let isSignup = false;
 let isAdminLogin = false;
 
-// Toggle login/signup view
+
 document.addEventListener('click', (e) => {
   if (e.target.id === 'toggle-auth') {
     e.preventDefault();
@@ -23,7 +42,7 @@ document.addEventListener('click', (e) => {
   }
 });
 
-// Trigger admin login
+
 document.addEventListener('click', (e) => {
   if (e.target.id === 'admin-login-toggle') {
     e.preventDefault();
@@ -34,7 +53,7 @@ document.addEventListener('click', (e) => {
   }
 });
 
-// Open modal
+
 [startBtn, loginBtn, signupBtn, createQuizBtn].forEach((btn) => {
   if (btn) {
     btn.addEventListener('click', (e) => {
@@ -47,7 +66,7 @@ document.addEventListener('click', (e) => {
   }
 });
 
-// Close modal
+
 function closeModal() {
   modal.classList.remove('active');
   form.reset();
@@ -64,7 +83,7 @@ window.addEventListener('keydown', (e) => {
   if (e.key === 'Escape' && modal.classList.contains('active')) closeModal();
 });
 
-// Update UI
+
 function renderAuthMode() {
   authTitle.textContent = isAdminLogin ? 'Admin Login' : (isSignup ? 'Sign Up' : 'Login');
   authBtn.textContent = isAdminLogin ? 'Login as Admin' : (isSignup ? 'Sign Up' : 'Login');
@@ -92,13 +111,13 @@ function renderAuthMode() {
   authMessage.textContent = '';
 }
 
-// Remove confirm field
+
 function removeConfirmPasswordField() {
   document.getElementById('confirm-password')?.remove();
   document.querySelector('label[for="confirm-password"]')?.remove();
 }
 
-// Form logic
+
 form.addEventListener('submit', (e) => {
   e.preventDefault();
 

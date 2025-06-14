@@ -1,4 +1,3 @@
-// admin.js
 const logoutBtn = document.getElementById('logout-btn');
 const quizForm = document.getElementById('create-quiz-form');
 const quizList = document.getElementById('quiz-list');
@@ -108,7 +107,7 @@ function saveQuiz() {
   quizzes.push(currentQuiz);
   localStorage.setItem('quizzes', JSON.stringify(quizzes));
 
-  console.log("Saved quiz:", currentQuiz); // ✅ helpful for debugging
+  console.log("Saved quiz:", currentQuiz);
 
   currentQuiz = null;
   currentQuestions = [];
@@ -178,7 +177,7 @@ function displayPendingQuizzes() {
 window.approveQuiz = function(idx) {
   const pending = JSON.parse(localStorage.getItem('pendingQuizzes') || '[]');
   const quiz = pending.splice(idx, 1)[0];
-  // Add to quizzes
+  
   const quizzes = JSON.parse(localStorage.getItem('quizzes') || '[]');
   quizzes.push(quiz);
   localStorage.setItem('quizzes', JSON.stringify(quizzes));
@@ -200,4 +199,3 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 
-//document.addEventListener('DOMContentLoaded', displayQuizzes);

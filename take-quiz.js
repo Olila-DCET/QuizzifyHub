@@ -1,20 +1,13 @@
-// take-quiz.js
 const urlParams = new URLSearchParams(window.location.search);
 const quizId = urlParams.get('id');
-
 const quizDetails = document.getElementById('quiz-details');
 const quizForm = document.getElementById('quiz-form');
 const submitBtn = document.getElementById('submit-btn');
 const resultDiv = document.getElementById('quiz-result');
 const backBtn = document.getElementById('back-btn');
-
 const quizzes = JSON.parse(localStorage.getItem('quizzes') || '[]');
 const quiz = quizzes.find(q => q.id === quizId);
-
-// Get username for result tracking
 const username = localStorage.getItem('username') || 'guest';
-
-// Check if this quiz is already taken by this user
 const quizResults = JSON.parse(localStorage.getItem('quizResults') || '[]');
 const alreadyTaken = quizResults.some(
   r => r.quizId === quizId && r.username === username
@@ -74,7 +67,6 @@ submitBtn.addEventListener('click', (e) => {
 
   if (!quiz || !quiz.questions) return;
 
-  // Prevent retake
   if (alreadyTaken) {
     resultDiv.innerHTML = `<div style="color:var(--warning);font-weight:600;">You have already taken this quiz.</div>`;
     return;
@@ -111,7 +103,6 @@ submitBtn.addEventListener('click', (e) => {
     `;
   });
 
-  // Save result so user can't retake
   quizResults.push({
     quizId,
     username,
