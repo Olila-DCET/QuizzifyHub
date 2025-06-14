@@ -1,4 +1,3 @@
-// Elements
 const logoutBtn = document.getElementById('logout-btn');
 const usernameDisplay = document.getElementById('username-display');
 const resultsContainer = document.getElementById('results-container');
@@ -13,7 +12,7 @@ const cancelStudentQuizBtn = document.getElementById('cancel-student-quiz-btn');
 let studentQuizData = null;
 let studentQuestions = [];
 
-// Open modal
+
 if (studentCreateQuizBtn) {
   studentCreateQuizBtn.addEventListener('click', () => {
     studentQuizModal.style.display = 'flex';
@@ -25,7 +24,7 @@ if (studentCreateQuizBtn) {
   });
 }
 
-// Close modal
+
 if (closeStudentQuizModal) {
   closeStudentQuizModal.addEventListener('click', () => {
     studentQuizModal.style.display = 'none';
@@ -47,20 +46,18 @@ if (cancelStudentQuizBtn) {
   });
 }
 
-
-// Username display
 const username = localStorage.getItem('username');
 if (username && usernameDisplay) {
   usernameDisplay.textContent = `Hello, ${username}`;
 }
 
-// Display a quiz card
+
 function displayQuiz(quiz) {
-  // Normalize subject for category id (remove spaces, lowercase)
+
   const normalizedSubject = quiz.subject.replace(/\s+/g, '').toLowerCase();
   let container = document.querySelector(`#category-${normalizedSubject} .quiz-items`);
 
-  // If subject category doesn't exist, create it dynamically
+ 
   if (!container) {
     const newCategory = document.createElement('div');
     newCategory.className = 'quiz-category';
@@ -88,7 +85,7 @@ function displayQuiz(quiz) {
   if (msg) msg.remove();
 }
 
-// Display "No quizzes" message if needed
+
 function displayNoQuizzes() {
   document.querySelectorAll('.quiz-items').forEach(container => {
     if (!container.children.length) {
@@ -100,9 +97,11 @@ function displayNoQuizzes() {
   });
 }
 
-// Display quiz results
+
 function displayQuizResults() {
-  const results = JSON.parse(localStorage.getItem('quizResults')) || [];
+  const username = localStorage.getItem('username');
+  const results = (JSON.parse(localStorage.getItem('quizResults')) || [])
+    .filter(r => r.username === username);
 
   if (!results.length) {
     resultsContainer.innerHTML = '<p>No quiz results yet.</p>';
@@ -113,17 +112,18 @@ function displayQuizResults() {
   results.forEach((result) => {
     const div = document.createElement('div');
     div.className = 'result-card';
-quizDiv.innerHTML = `
-  <strong>${quiz.title}</strong><br/>
-  <span class="quiz-grade">Grade Level: ${quiz.grade}</span><br/>
-  <button class="btn-take-quiz" onclick="window.location.href='take-quiz.html?id=${quiz.id}'">Take Quiz</button>
-`;
+    div.innerHTML = `
+      <h4>${result.title}</h4>
+      <p>Subject: ${result.subject} | Grade: ${result.grade}</p>
+      <p>Score: ${result.score} / ${result.total}</p>
+      <p>Date: ${new Date(result.date).toLocaleString()}</p>
+    `;
     resultsContainer.appendChild(div);
   });
 }
 
-// Load quizzes
-quizContainer.innerHTML = ''; // Clear previous
+
+quizContainer.innerHTML = ''; 
 
 const quizzes = JSON.parse(localStorage.getItem('quizzes') || '[]');
 if (quizzes.length === 0) {
@@ -133,10 +133,10 @@ if (quizzes.length === 0) {
   displayNoQuizzes();
 }
 
-// Load results
+
 document.addEventListener('DOMContentLoaded', displayQuizResults);
 
-// Logout logic
+
 if (logoutBtn) {
   logoutBtn.addEventListener('click', () => {
     if (confirm('Are you sure you want to logout?')) {
@@ -147,7 +147,7 @@ if (logoutBtn) {
 }
 
 
-// Step 1: Quiz Info
+
 if (studentQuizForm) {
   studentQuizForm.addEventListener('submit', (e) => {
     e.preventDefault();
@@ -176,7 +176,7 @@ if (studentQuizForm) {
   });
 }
 
-// Step 2: Add Questions
+
 function renderStudentQuestionForm() {
   if (studentQuestions.length >= 10) {
     saveStudentQuiz();
@@ -201,7 +201,7 @@ studentQuizQuestionsDiv.innerHTML = `
   <p>${studentQuestions.length}/10 questions added</p>
 `;
 
-// Cancel during question entry
+
 document.getElementById('cancel-question-btn').addEventListener('click', () => {
   studentQuizModal.style.display = 'none';
   studentQuizForm.style.display = '';
