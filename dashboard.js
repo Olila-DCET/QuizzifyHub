@@ -12,7 +12,7 @@ const cancelStudentQuizBtn = document.getElementById('cancel-student-quiz-btn');
 let studentQuizData = null;
 let studentQuestions = [];
 
-// Show modal for creating quiz
+
 if (studentCreateQuizBtn) {
   studentCreateQuizBtn.addEventListener('click', () => {
     studentQuizModal.style.display = 'flex';
@@ -60,7 +60,6 @@ function displayAllQuizzes() {
     return;
   }
 
-  // Group quizzes by normalized subject
   const subjectMap = {};
   quizzes.forEach(quiz => {
     if (!quiz.questions || !quiz.questions.length) return;
@@ -74,7 +73,6 @@ function displayAllQuizzes() {
     subjectMap[normalizedSubject].quizzes.push(quiz);
   });
 
-  // Render each subject category and its quizzes
   Object.values(subjectMap).forEach(({ subject, quizzes }) => {
     const normalizedSubject = subject.replace(/\s+/g, '').toLowerCase();
     const categoryDiv = document.createElement('div');
@@ -98,7 +96,6 @@ function displayAllQuizzes() {
       quizItemsDiv.appendChild(quizDiv);
     });
 
-    // If no quizzes in this category, show message
     if (!quizItemsDiv.children.length) {
       const msg = document.createElement('p');
       msg.className = 'no-quiz-msg';
@@ -108,7 +105,6 @@ function displayAllQuizzes() {
   });
 }
 
-// --- END DYNAMIC QUIZ CATEGORY RENDERING ---
 
 function displayQuizResults() {
   const username = localStorage.getItem('username');
@@ -134,7 +130,6 @@ function displayQuizResults() {
   });
 }
 
-// Render quizzes dynamically
 displayAllQuizzes();
 
 document.addEventListener('DOMContentLoaded', displayQuizResults);
@@ -250,7 +245,6 @@ function renderStudentQuestionForm() {
   });
 }
 
-// Step 3: Save to pendingQuizzes
 function saveStudentQuiz() {
   studentQuizData.questions = studentQuestions;
   const pending = JSON.parse(localStorage.getItem('pendingQuizzes') || '[]');
