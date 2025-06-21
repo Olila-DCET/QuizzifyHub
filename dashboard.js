@@ -12,31 +12,22 @@ const cancelStudentQuizBtn = document.getElementById('cancel-student-quiz-btn');
 let studentQuizData = null;
 let studentQuestions = [];
 
+function resetStudentQuizModal() {
+  studentQuizModal.style.display = 'none';
+  studentQuizForm.style.display = '';
+  studentQuizQuestionsDiv.innerHTML = '';
+  studentQuizForm.reset();
+  studentQuizData = null;
+  studentQuestions = [];
+}
+
+[closeStudentQuizModal, cancelStudentQuizBtn].forEach(btn => {
+  if (btn) btn.addEventListener('click', resetStudentQuizModal);
+});
 
 if (studentCreateQuizBtn) {
   studentCreateQuizBtn.addEventListener('click', () => {
     studentQuizModal.style.display = 'flex';
-    studentQuizForm.style.display = '';
-    studentQuizQuestionsDiv.innerHTML = '';
-    studentQuizForm.reset();
-    studentQuizData = null;
-    studentQuestions = [];
-  });
-}
-
-if (closeStudentQuizModal) {
-  closeStudentQuizModal.addEventListener('click', () => {
-    studentQuizModal.style.display = 'none';
-    studentQuizForm.style.display = '';
-    studentQuizQuestionsDiv.innerHTML = '';
-    studentQuizForm.reset();
-    studentQuizData = null;
-    studentQuestions = [];
-  });
-}
-if (cancelStudentQuizBtn) {
-  cancelStudentQuizBtn.addEventListener('click', () => {
-    studentQuizModal.style.display = 'none';
     studentQuizForm.style.display = '';
     studentQuizQuestionsDiv.innerHTML = '';
     studentQuizForm.reset();
@@ -52,7 +43,7 @@ if (username && usernameDisplay) {
 
 // --- DYNAMIC QUIZ CATEGORY RENDERING ---
 function displayAllQuizzes() {
-  quizContainer.innerHTML = ''; // Clear previous content
+  quizContainer.innerHTML = '';
 
   const quizzes = JSON.parse(localStorage.getItem('quizzes') || '[]');
   if (quizzes.length === 0) {
@@ -105,7 +96,6 @@ function displayAllQuizzes() {
   });
 }
 
-
 function displayQuizResults() {
   const username = localStorage.getItem('username');
   const results = (JSON.parse(localStorage.getItem('quizResults')) || [])
@@ -131,7 +121,6 @@ function displayQuizResults() {
 }
 
 displayAllQuizzes();
-
 document.addEventListener('DOMContentLoaded', displayQuizResults);
 
 if (logoutBtn) {
@@ -195,14 +184,7 @@ function renderStudentQuestionForm() {
     <p>${studentQuestions.length}/10 questions added</p>
   `;
 
-  document.getElementById('cancel-question-btn').addEventListener('click', () => {
-    studentQuizModal.style.display = 'none';
-    studentQuizForm.style.display = '';
-    studentQuizQuestionsDiv.innerHTML = '';
-    studentQuizForm.reset();
-    studentQuizData = null;
-    studentQuestions = [];
-  });
+  document.getElementById('cancel-question-btn').addEventListener('click', resetStudentQuizModal);
 
   document.getElementById('student-question-form').addEventListener('submit', (e) => {
     e.preventDefault();
@@ -251,12 +233,5 @@ function saveStudentQuiz() {
   pending.push(studentQuizData);
   localStorage.setItem('pendingQuizzes', JSON.stringify(pending));
   studentQuizQuestionsDiv.innerHTML = '<p style="color:green;font-weight:600;">Quiz submitted for admin approval!</p>';
-  setTimeout(() => {
-    studentQuizModal.style.display = 'none';
-    studentQuizForm.style.display = '';
-    studentQuizQuestionsDiv.innerHTML = '';
-    studentQuizForm.reset();
-    studentQuizData = null;
-    studentQuestions = [];
-  }, 1500);
+  setTimeout(resetStudentQuizModal, 1500);
 }
