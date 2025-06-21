@@ -146,6 +146,8 @@ function deleteQuiz(index) {
   localStorage.setItem('quizzes', JSON.stringify(quizzes));
   displayQuizzes();
 }
+window.deleteQuiz = deleteQuiz;
+
 function displayPendingQuizzes() {
   let pendingList = document.getElementById('pending-quiz-list');
   if (!pendingList) {
