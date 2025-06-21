@@ -235,3 +235,15 @@ function saveStudentQuiz() {
   studentQuizQuestionsDiv.innerHTML = '<p style="color:green;font-weight:600;">Quiz submitted for admin approval!</p>';
   setTimeout(resetStudentQuizModal, 1500);
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+  displayAllQuizzes();
+  displayQuizResults();
+});
+
+// Modal close on outside click
+window.addEventListener('click', (e) => {
+  if (studentQuizModal.style.display === 'flex' && e.target === studentQuizModal) {
+    resetStudentQuizModal();
+  }
+});
